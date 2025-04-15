@@ -71,7 +71,11 @@ From the IRs, CircuitOps uses the relational tables generated from OpenROAD and 
 ```
 python3 -m venv circuitops
 source circuitops/bin/activate
-pip3 install -r requirements.txt
+<!-- pip3 install -r requirements.txt -->
+<!-- pip install torch==2.1.0
+pip install dgl -f https://data.dgl.ai/wheels/torch-2.1/cu121/repo.html -->
+conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 -c pytorch
+conda install -c dglteam/label/th21_cu118 dgl
 ```
 
 ### Use CircuitOps
@@ -94,6 +98,22 @@ The following command to generate the relations tables in the ./IRs/ directory.
 ```cd src/python```
 
 ```python BT_sampling_OpenROAD.py ../../IRs/nangate45/gcd/ ../../datasets/```
+
+```
+../../src/OpenROAD/install/bin/openroad -python OpenROAD_example.py --design_name NV_NVDLA_partition_m
+
+../../src/OpenROAD/install/bin/openroad -python update_circuitops_properties.py --design_name NV_NVDLA_partition_m --file_path ../../IRs/NV_NVDLA_partition_m/ --dump_csv --dump_path ../../IRs/ASAP7/NV_NVDLA_partition_m_new/
+
+../../src/OpenROAD/install/bin/openroad -python generate_tables.py --design_name NV_NVDLA_partition_m
+
+python CircuitOps_example.py --path_IR ../../IR_Tables/NV_NVDLA_partition_m/ --path_LPG_gen_func ../../src/python/
+
+OpenROAD/install/bin/openroad ./src/tcl/generate_tables.tcl
+
+python BT_sampling_OpenROAD.py ../../IRs/ASAP7/NV_NVDLA_partition_m/ ../../datasets/
+
+python load_sampling_OpenROAD.py ../../IRs/ASAP7/NV_NVDLA_partition_m/ ../../datasets/
+```
 
 #### gRPC-based Data Transfer
 

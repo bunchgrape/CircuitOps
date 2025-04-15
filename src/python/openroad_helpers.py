@@ -18,6 +18,9 @@ import pdn, odb, utl
 from openroad import Tech, Design, Timing
 import openroad as ord
 import pandas as pd
+
+from pdb import set_trace as bp
+from tqdm import tqdm
 from collections import defaultdict
 
 class CircuitOps_Tables:
@@ -272,33 +275,37 @@ class CircuitOps_Tables:
     
 
 class CircuitOps_File_DIR:
-  def __init__(self, CircuitOps_dir):
+  def __init__(self, CircuitOps_dir, design_name):
     ### SET DESIGN ###
-    self.DESIGN_NAME = "gcd"
+    # self.DESIGN_NAME = "gcd"
     #self.DESIGN_NAME = "aes"
     #self.DESIGN_NAME = "bp_fe"
     #self.DESIGN_NAME = "bp_be"
+    self.DESIGN_NAME = design_name
     
     ### SET PLATFORM ###
-    self.PLATFORM = "nangate45"
+    # self.PLATFORM = "nangate45"
+    self.PLATFORM = "ASAP7"
 
     ### INTERNAL DEFINTIONS: DO NOT MODIFY BELOW ####
     self.CIRCUIT_OPS_DIR = CircuitOps_dir
-    self.DESIGN_DIR = self.CIRCUIT_OPS_DIR + "/designs/" + self.PLATFORM + "/" + self.DESIGN_NAME
+    self.DESIGN_DIR = self.CIRCUIT_OPS_DIR + "/designs/" + self.DESIGN_NAME
     self.PLATFORM_DIR = self.CIRCUIT_OPS_DIR + "/platforms/" + self.PLATFORM
+    self.design_file_name = design_name
     
-    self.DEF_FILE = self.DESIGN_DIR + "/6_final.def.gz"
-    self.TECH_LEF_FILE = [os.path.join(root, file) for root, _, files in os.walk(self.PLATFORM_DIR + "/lef/") for file in files if file.endswith("tech.lef")]
+    
+    self.DEF_FILE = f"{self.DESIGN_DIR}/{self.design_file_name}.def"
+    self.TECH_LEF_FILE = [os.path.join(root, file) for root, _, files in os.walk(self.PLATFORM_DIR + "/lef/") for file in files if (file.endswith(".lef") and "tech" in file)]
     self.LEF_FILES = [os.path.join(root, file) for root, _, files in os.walk(self.PLATFORM_DIR + "/lef/") for file in files if file.endswith(".lef")]
     self.LIB_FILES = [os.path.join(root, file) for root, _, files in os.walk(self.PLATFORM_DIR + "/lib/") for file in files if file.endswith(".lib")]
-    self.SDC_FILE = self.DESIGN_DIR + "/6_final.sdc.gz"
-    self.NETLIST_FILE = self.DESIGN_DIR + "/6_final.v"
-    self.SPEF_FILE = self.DESIGN_DIR + "/6_final.spef.gz"
+    self.SDC_FILE = f"{self.DESIGN_DIR}/{self.design_file_name}.sdc"
+    self.NETLIST_FILE = f"{self.DESIGN_DIR}/{self.design_file_name}.v"
+    self.SPEF_FILE = f"{self.DESIGN_DIR}/{self.design_file_name}.spef"
 
     ### SET OUTPUT DIRECTORY ###
     self.OUTPUT_DIR = self.CIRCUIT_OPS_DIR + "/IRs/" + self.PLATFORM + "/" + self.DESIGN_NAME
     self.create_path()
-
+    
     self.cell_file = self.OUTPUT_DIR + "/cell_properties.csv"
     self.libcell_file = self.OUTPUT_DIR + "/libcell_properties.csv"
     self.pin_file = self.OUTPUT_DIR + "/pin_properties.csv"
@@ -364,11 +371,28 @@ def load_design(_CircuitOps_File_DIR):
   design = Design(tech)
   design.readDef(_CircuitOps_File_DIR.DEF_FILE)
   design.evalTclString("read_sdc " + _CircuitOps_File_DIR.SDC_FILE)  
-  design.evalTclString("read_spef " + _CircuitOps_File_DIR.SPEF_FILE)
+  # design.evalTclString("read_spef " + _CircuitOps_File_DIR.SPEF_FILE)
   design.evalTclString("set_propagated_clock [all_clocks]")
   add_global_connection(design, net_name="VDD", pin_pattern="VDD", power=True)
   add_global_connection(design, net_name="VSS", pin_pattern="VSS", ground=True)
   odb.dbBlock.globalConnect(ord.get_db_block())
+  
+  # signal_low_layer = design.getTech().getDB().getTech().findLayer("M1").getRoutingLevel()
+  # signal_high_layer = design.getTech().getDB().getTech().findLayer("M7").getRoutingLevel()
+  # clk_low_layer = design.getTech().getDB().getTech().findLayer("M1").getRoutingLevel()
+  # clk_high_layer = design.getTech().getDB().getTech().findLayer("M7").getRoutingLevel()
+  # grt = design.getGlobalRouter()
+  # grt.clear()
+  # grt.setAllowCongestion(True)
+  # grt.setMinRoutingLayer(signal_low_layer)
+  # grt.setMaxRoutingLayer(signal_high_layer)
+  # grt.setMinLayerForClock(clk_low_layer)
+  # grt.setMaxLayerForClock(clk_high_layer)
+  # grt.setAdjustment(0.5)
+  # grt.setVerbose(False)
+  # grt.globalRoute(False)
+  # design.evalTclString("estimate_parasitics -global_routing")
+
   return tech, design
 
 def print_cell_property_entry(outfile, cell_props):
@@ -465,8 +489,11 @@ def Pin_Num_Reachable_Endpoint(ITerm, timing):
       num += 1
   return num
 
-def get_tables_OpenROAD_API(data_root, write_table, return_df):
-  _CircuitOps_File_DIR = CircuitOps_File_DIR(data_root)
+def get_fo4_delay(libcell, corner):
+  tmp_inst [::sta::make_instance tmp_inst $libcell]
+
+def get_tables_OpenROAD_API(data_root, write_table, return_df, design_name):
+  _CircuitOps_File_DIR = CircuitOps_File_DIR(data_root, design_name)
   tech_design, design = load_design(_CircuitOps_File_DIR)
   timing = Timing(design)
 
@@ -509,7 +536,7 @@ def get_tables_OpenROAD_API(data_root, write_table, return_df):
   ############################################
   block = ord.get_db_block()
   insts = block.getInsts()
-  for inst in insts:
+  for inst in tqdm(insts):
     cell_dict = defaultdict()
     cell_name = inst.getName()
     cell_dict["cell_name"] = cell_name
@@ -551,6 +578,9 @@ def get_tables_OpenROAD_API(data_root, write_table, return_df):
     ######################
     for ITerm in inst_ITerms:
       #skip VDD/VSS pins
+      if ITerm.getNet() == None:
+        print(f"Skipping pin {ITerm.getName()} as it is not connected to any net")
+        continue
       if ITerm.getNet().getSigType() != 'POWER' and ITerm.getNet().getSigType() != 'GROUND':
         #pin_property
         pin_name = design.getITermName(ITerm)
@@ -629,7 +659,7 @@ def get_tables_OpenROAD_API(data_root, write_table, return_df):
   ######################
   #iterate through nets#
   ######################
-  for net in nets:
+  for net in tqdm(nets):
     if net.getSigType() != 'POWER' and net.getSigType() != 'GROUND':
       net_name = net.getName()
       num_reachable_endpoint = 0

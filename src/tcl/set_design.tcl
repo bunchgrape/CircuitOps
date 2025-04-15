@@ -14,32 +14,36 @@
 # limitations under the License.
 
 ### SET DESIGN ###
-set DESIGN_NAME gcd
+# set DESIGN_NAME gcd
 #set DESIGN_NAME aes
 #set DESIGN_NAME bp_fe
 #set DESIGN_NAME bp_be
+set DESIGN_NAME NV_NVDLA_partition_m
+# set design_file_name 6_final
+set design_file_name NV_NVDLA_partition_m
 
 ### SET PLATFORM ###
-set PLATFORM nangate45
+# set PLATFORM nangate45
+set PLATFORM ASAP7
 
 ### SET OUTPUT DIRECTORY ###
 set OUTPUT_DIR "./IRs/${PLATFORM}/${DESIGN_NAME}"
 
 ### INTERNAL DEFINTIONS: DO NOT MODIFY BELOW ####
 set CIRCUIT_OPS_DIR "./"
-set DESIGN_DIR "${CIRCUIT_OPS_DIR}/designs/${PLATFORM}/${DESIGN_NAME}"
+set DESIGN_DIR "${CIRCUIT_OPS_DIR}/designs/${DESIGN_NAME}"
 set PLATFORM_DIR "${CIRCUIT_OPS_DIR}/platforms/${PLATFORM}"
 
 file mkdir "${OUTPUT_DIR}"
 
-set DEF_FILE "${DESIGN_DIR}/6_final.def.gz"
-set TECH_LEF_FILE [glob ${PLATFORM_DIR}/lef/*tech.lef]
+set DEF_FILE "${DESIGN_DIR}/${design_file_name}.def"
+set TECH_LEF_FILE [glob ${PLATFORM_DIR}/lef/*tech*.lef]
 #set LEF_FILES [glob ./platforms/$PLATFORM/lef/*macro.lef]
 set LEF_FILES [glob ${PLATFORM_DIR}/lef/*.lef]
 set LIB_FILES [glob ${PLATFORM_DIR}/lib/*.lib]
-set SDC_FILE "${DESIGN_DIR}/6_final.sdc.gz"
-set NETLIST_FILE  "${DESIGN_DIR}/6_final.v"
-set SPEF_FILE "${DESIGN_DIR}/6_final.spef.gz"
+set SDC_FILE "${DESIGN_DIR}/${design_file_name}.sdc"
+set NETLIST_FILE  "${DESIGN_DIR}/${design_file_name}.v"
+set SPEF_FILE "${DESIGN_DIR}/${design_file_name}.spef"
 
 set cell_file "${OUTPUT_DIR}/cell_properties.csv"
 set libcell_file "${OUTPUT_DIR}/libcell_properties.csv"

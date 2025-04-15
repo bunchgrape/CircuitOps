@@ -543,13 +543,15 @@ proc load_design {def netlist libs tech_lef lefs sdc design spef} {
     read_lef $lef
   }
   read_def $def
-  read_spef $spef
+  # read_spef $spef
   read_sdc $sdc
   set_propagated_clock [all_clocks]
   # Ensure all OR created (rsz/cts) instances are connected
   add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {^VDD$} -power
   add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {^VSS$} -ground
   global_connect
+
+  global_route
 }
 
 proc get_ITerm_name {ITerm} {
