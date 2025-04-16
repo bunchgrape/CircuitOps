@@ -1,5 +1,5 @@
 # CircuitOps
-(Notice: This Github repository is currently in the progress of being developed and some files are still missing. We will try to complete it ASAP. Thanks for your patience!)
+
 ## Introduction
 
 CircuitOps is a data infrastructure to facilitate dataset generation and model deployment in Generative AI (GAI)-based circuit optimization tasks. It mainly has the following contributes:
@@ -11,9 +11,9 @@ downstream GAI applications;
 deployment of GAI models into production.
 
 Figure.1 depicts the overview of CircuitOps. Based on the Intermediate Representation of labeled property graphs, CircuitOps consists of two main modules: IR generation and dataset generation.
-The IR generation module transforms standard EDA files into LPGs
+The IR generation module transforms standard EDA files into IR tables and LPGs
 that store netlist information and are reused across tasks. The taskspecific dataset is constructed with the dataset generation module
-using its AI-friendly data structures and interfaces. CircuitOps also
+using its AI-friendly data structures and APIs. CircuitOps also
 provides a gRPC-based data transfer method facilitating inference
 of GAI models in production deployment.
 
@@ -24,7 +24,7 @@ of GAI models in production deployment.
 Fig. 1: CircuitOps overview. (a) shows the structure of CircuitOps; (b) illustrates the netlist labeled property graph backed by relational tables.
 
 
-## Getting Started
+## Initial Setup
 
 Download the CircuitOps repository as shown below:
 
@@ -35,38 +35,18 @@ cd CircuitOps
 ```
 
 
-### Install CircuitOps
+### Install CircuitOps Using Docker
 
-
-#### Dependencies
-
-The following dependencies are needed by CircuitOps. OpenROAD is required for EDA tools file parsing and generating properties.
-
-- python3.7
-- pip3
-- OpenROAD
-
-
-#### Install OpenROAD
-
-Refer to the dependencies of the OpenROAD Project and instrcutions [here](https://openroad.readthedocs.io/en/latest/main/README.html#build-openroad).
-
-We use OpenROAD to read in standard EDA files and generate relational tables as IRs.
-
-
-TLDR instructions to build OpenROAD is listed below:
+The following technique assumes you have docker installed on your machine. If you do not have then install docker from [here](https://docs.docker.com/engine/install/). Build the docker image and run using the following commands:
 
 ```
-cd CircuitOps/src/OpenROAD
-mkdir build
-cd build
-cmake ..
-make -j
+docker build -t circuitops_img .
+docker run -it --name <container name> circuitops_img 
 ```
 
-#### Install CircuitOps in Bash
+### Use CircuitOps
 
-From the IRs, CircuitOps uses the relational tables generated from OpenROAD and creates LPGs and datasets.  Installation of Python scripts of Circuit ops in described below through a virtual environment and pip.  From the CircuitOps top level directory run the following commands:
+This repository provides scripts to generate IR tables, sample IR tables of open source designs, APIs for processing and analyzing these tables, and example applications demonstrating how to use CircuitOps.
 
 ```
 python3 -m venv circuitops
@@ -78,26 +58,44 @@ conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 -c pytorch
 conda install -c dglteam/label/th21_cu118 dgl
 ```
 
-### Use CircuitOps
+## Repository Structure
 
+The repository is organized as follows:
 
-#### Generate IRs from OpenROAD
+1. **[Scripts for IR Generation](./scripts)**  
+   Scripts to generate IR tables using TCL or Python from OpenROAD.
 
-##### Set design and platform
+2. **[Sample designs](./designs)**  
+   Design files for various open source designs across a few technology nodes.
 
-Modify [set_design.tcl](./src/tcl/set_design.tcl) to name the design and platform. If you need to add more designs, add them to the designs directory and modify the set_design.tcl file appropriately.
+3. **[Sample platforms](./platforms)**  
+   Technology specific files for asap7, nangate45 and sky130hd technology nodes.
+   
+4. **[Sample IR Tables](./IRs)**  
+   Pre-existing IR tables for various designs across a few technology nodes.
 
-##### Run OpenROAD and TCL scripts to generate relational tables
+5. **[CircuitOps APIs](./src)**  
+   Python APIs for preprocessing the IR tables and LPGs to generate application specific datasets.
 
-The following command to generate the relations tables in the ./IRs/ directory.
+6. **[Example Applications](./examples)**  
+   Use case examples showcasing how to apply CircuitOps APIs.
 
-```./path/to/binary/openroad ./src/tcl/generate_tables.tcl```
+---
 
+## Quick Start Guide
 
-#### Generate Datasets
-```cd src/python```
+### 1. Generate IR Tables
+- Use **TCL scripts** or **Python scripts** in OpenROAD to generate IR tables.  
+- Detailed instructions are provided in the [scripts folder README](./scripts/README.md).
 
-```python BT_sampling_OpenROAD.py ../../IRs/nangate45/gcd/ ../../datasets/```
+### 2. Sample IR Tables
+- Pre-existing IR tables for popular designs (e.g., gcd, aes, jpeg) across different technology nodes (asap7, nangate45, sky130hd) are available for direct use.  
+- Details on available designs and their specifications are in the [sample_IRs folder README](./IRs/README.md).
+
+### 3. Use CircuitOps APIs
+- Once the IR tables are present for the desired designs CircuitOps APIs can be used to preprocess the data and generate custom application specific datasets.
+- The `circuitops_api.py` provides a central API for accessing and analyzing IR tables.  
+- See the [src folder README](./src/README.md) for usage details.
 
 ```
 ../../src/OpenROAD/install/bin/openroad -python OpenROAD_example.py --design_name NV_NVDLA_partition_m
@@ -116,7 +114,11 @@ python load_sampling_OpenROAD.py ../../IRs/ASAP7/NV_NVDLA_partition_m/ ../../dat
 ```
 
 #### gRPC-based Data Transfer
+### 4. Example Applications
+- Some ML use cases are provided in the [examples folder](./examples). See the [examples folder README](./examples/README.md) for detailed information.
+- This can be helpful to understand how to use CircuitOps to generate custom datasets.
 
+---
 
 
 ## Cite this work
