@@ -7,13 +7,13 @@ These examples showcase the workflow to process Intermediate Representation (IR)
 
 ### Use Cases  
 
-1. **[Arc Delay Predictor](./examples/arc_delay_prediction)**  
+1. **[Arc Delay Predictor](./arc_delay_prediction)**  
    - Predicts arc delays of standard cells based on the input pin slew, load capacitance and cell type.  
 
-2. **[Pre-route Net Delay Predictor](./examples/preroute_delay_prediction)**  
+2. **[Pre-route Net Delay Predictor](./preroute_delay_prediction)**  
    - It is a cross-stage timing predictor which estimates net delays before routing.  
 
-3. **[Timing Graph Convolutional Network (GCN)](./examples/timingGCN)**  
+3. **[Timing Graph Convolutional Network (GCN)](./timingGCN)**  
    - Leverages Graph Neural Networks (GNNs) to predict slacks at the endpoints of a design.  
 
 ---
