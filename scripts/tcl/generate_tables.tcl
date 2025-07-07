@@ -119,7 +119,7 @@ foreach inst $insts {
   dict set cell_dict libcell_name $master_name
   set master_libcell [get_lib_cells $master_name]
   if {$master_libcell == ""} {
-      puts "WARN: libcell definition not found for cell : $master_name"
+      # puts "WARN: libcell definition not found for cell : $master_name"
       dict set cell_dict is_inv 0
       dict set cell_dict is_buf 0
   } else { 
@@ -129,8 +129,8 @@ foreach inst $insts {
   set is_seq [dict exists $seq_cell_dict [get_cells $cell_name]]
   set is_macro [$master_cell isBlock];
   
-#   dict set cell_dict is_seq $is_seq
-#   dict set cell_dict is_macro $is_macro
+  dict set cell_dict is_seq $is_seq
+  dict set cell_dict is_macro $is_macro
   
   set cell_is_in_clk 0
   set inst_ITerms [$inst getITerms]
@@ -200,12 +200,12 @@ foreach inst $insts {
       dict set pin_dict is_endpoint [dict exists $end_points $pin_name]
       dict set pin_dict maxtran $maxtran
       dict set pin_dict num_reachable_endpoint 0
-      dict set pin_dict x [get_pin_x $ITerm]
-      dict set pin_dict y [get_pin_y $ITerm]
-      dict set pin_dict pin_rise_arr [get_pin_arr [get_pin $pin_name] "rise"]
-      dict set pin_dict pin_fall_arr [get_pin_arr [get_pin $pin_name] "fall"]
-      dict set pin_dict pin_tran [get_pin_slew [get_pin $pin_name] $corner]
-      dict set pin_dict input_pin_cap [get_pin_input_cap $pin_name $corner]
+      # dict set pin_dict x [get_pin_x $ITerm]
+      # dict set pin_dict y [get_pin_y $ITerm]
+      # dict set pin_dict pin_rise_arr [get_pin_arr [get_pin $pin_name] "rise"]
+      # dict set pin_dict pin_fall_arr [get_pin_arr [get_pin $pin_name] "fall"]
+      # dict set pin_dict pin_tran [get_pin_slew [get_pin $pin_name] $corner]
+      # dict set pin_dict input_pin_cap [get_pin_input_cap $pin_name $corner]
     }
 
     #################################################
@@ -255,54 +255,54 @@ puts $net_outfile [join $header ","]
 set net_pin_outfile [open $net_pin_file w]
 puts $net_pin_outfile "src,tar,src_type,tar_type"
 
-# ######################
-# #iterate through nets#
-# ######################
-# foreach net $nets {
-#   set net_name [$net getName]
-#   if {!([::sta::Net_is_power [get_net $net_name]] || [::sta::Net_is_ground [get_net $net_name]])} {
-#     set total_cap [::sta::Net_capacitance [get_net $net_name] $corner max]
-#     set net_ITerms [$net getITerms]
+######################
+#iterate through nets#
+######################
+foreach net $nets {
+  set net_name [$net getName]
+  if {!([::sta::Net_is_power [get_net $net_name]] || [::sta::Net_is_ground [get_net $net_name]])} {
+    set total_cap [::sta::Net_capacitance [get_net $net_name] $corner max]
+    set net_ITerms [$net getITerms]
 
-#     dict set net_dict net_name $net_name
-#     dict set net_dict net_cap [[get_net $net_name] wire_capacitance $corner max]
-#     dict set net_dict net_res [$net getTotalResistance]
-#     dict set net_dict net_coupling [$net getTotalCouplingCap]
+    dict set net_dict net_name $net_name
+    dict set net_dict net_cap [[get_net $net_name] wire_capacitance $corner max]
+    dict set net_dict net_res [$net getTotalResistance]
+    dict set net_dict net_coupling [$net getTotalCouplingCap]
     
-#     set input_pins {}
-#     set output_pins {}
-#     set input_cells {}
-#     set output_cells {}
-#     ##########################
-#     #build net-pin edge table#
-#     ##########################
-#     set net_ITerms [$net getITerms]
-#     foreach ITerm $net_ITerms {
-#       set ITerm_name [get_ITerm_name $ITerm]
-#       set cell_ITerm_name [[$ITerm getInst] getName]
-#       if {[$ITerm isInputSignal]} {
-#         puts $net_pin_outfile "${net_name},${ITerm_name},net,pin"
-#         lappend output_pins $ITerm_name;
-#         lappend output_cells $cell_ITerm_name;
-#       } elseif {[$ITerm isOutputSignal]} {
-#         puts $net_pin_outfile "${ITerm_name},${net_name},pin,net"
-#         lappend input_pins $ITerm_name;
-#         lappend input_cells $cell_ITerm_name;
-#       }
-#     }
+    set input_pins {}
+    set output_pins {}
+    set input_cells {}
+    set output_cells {}
+    ##########################
+    #build net-pin edge table#
+    ##########################
+    set net_ITerms [$net getITerms]
+    foreach ITerm $net_ITerms {
+      set ITerm_name [get_ITerm_name $ITerm]
+      set cell_ITerm_name [[$ITerm getInst] getName]
+      if {[$ITerm isInputSignal]} {
+        puts $net_pin_outfile "${net_name},${ITerm_name},net,pin"
+        lappend output_pins $ITerm_name;
+        lappend output_cells $cell_ITerm_name;
+      } elseif {[$ITerm isOutputSignal]} {
+        puts $net_pin_outfile "${ITerm_name},${net_name},pin,net"
+        lappend input_pins $ITerm_name;
+        lappend input_cells $cell_ITerm_name;
+      }
+    }
 
-#     dict set net_dict fanout [llength $output_pins] 
-#     dict set net_dict total_cap $total_cap
-#     dict set net_dict net_route_length [get_net_route_length $net]
-#     print_net_property_entry $net_outfile $net_dict
-#     #################################################
-#     #build pin-pin edge table & cell-cell edge table#
-#     #################################################
-#     print_ip_op_pairs $pin_pin_outfile $input_pins $output_pins 1 $corner
-#     print_ip_op_cell_pairs $cell_cell_outfile $input_cells $output_cells
+    dict set net_dict fanout [llength $output_pins] 
+    dict set net_dict total_cap $total_cap
+    dict set net_dict net_route_length [get_net_route_length $net]
+    print_net_property_entry $net_outfile $net_dict
+    #################################################
+    #build pin-pin edge table & cell-cell edge table#
+    #################################################
+    print_ip_op_pairs $pin_pin_outfile $input_pins $output_pins 1 $corner
+    print_ip_op_cell_pairs $cell_cell_outfile $input_cells $output_cells
 
-#   }
-# }
+  }
+}
 
 close $net_outfile
 close $net_pin_outfile

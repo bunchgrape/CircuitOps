@@ -367,16 +367,11 @@ def load_design(_CircuitOps_File_DIR):
   design = Design(tech)
   design.readDef(_CircuitOps_File_DIR.DEF_FILE)
   design.evalTclString("read_sdc " + _CircuitOps_File_DIR.SDC_FILE)  
-<<<<<<< HEAD:src/python/openroad_helpers.py
-  # design.evalTclString("read_spef " + _CircuitOps_File_DIR.SPEF_FILE)
-=======
   #design.evalTclString("read_spef " + _CircuitOps_File_DIR.SPEF_FILE)
->>>>>>> e1c9983ed643cd8d2f2d3172a09fc6a2033a30d0:scripts/python/openroad_helpers.py
   design.evalTclString("set_propagated_clock [all_clocks]")
   add_global_connection(design, net_name="VDD", pin_pattern="VDD", power=True)
   add_global_connection(design, net_name="VSS", pin_pattern="VSS", ground=True)
   odb.dbBlock.globalConnect(ord.get_db_block())
-<<<<<<< HEAD:src/python/openroad_helpers.py
   
   # signal_low_layer = design.getTech().getDB().getTech().findLayer("M1").getRoutingLevel()
   # signal_high_layer = design.getTech().getDB().getTech().findLayer("M7").getRoutingLevel()
@@ -394,9 +389,7 @@ def load_design(_CircuitOps_File_DIR):
   # grt.globalRoute(False)
   # design.evalTclString("estimate_parasitics -global_routing")
 
-=======
   design.evalTclString("extract_parasitics -ext_model_file "+_CircuitOps_File_DIR.RCX_RULE)
->>>>>>> e1c9983ed643cd8d2f2d3172a09fc6a2033a30d0:scripts/python/openroad_helpers.py
   return tech, design
 
 def print_cell_property_entry(outfile, cell_props):
@@ -539,13 +532,9 @@ def Pin_Num_Reachable_Endpoint(ITerm, timing):
       num += 1
   return num
 
-<<<<<<< HEAD:src/python/openroad_helpers.py
 def get_fo4_delay(libcell, corner):
   tmp_inst [::sta::make_instance tmp_inst $libcell]
 
-def get_tables_OpenROAD_API(data_root, write_table, return_df, design_name):
-  _CircuitOps_File_DIR = CircuitOps_File_DIR(data_root, design_name)
-=======
 def get_startpoints(design):
     start_points = []
     start_points_ptr = design.evalTclString("::sta::startpoints").split()
@@ -576,7 +565,6 @@ def get_clknets(design):
 def get_tables_OpenROAD_API(data_root, write_table, return_df, design, tech):
   s1 = time.time()  
   _CircuitOps_File_DIR = CircuitOps_File_DIR(data_root, design, tech)
->>>>>>> e1c9983ed643cd8d2f2d3172a09fc6a2033a30d0:scripts/python/openroad_helpers.py
   tech_design, design = load_design(_CircuitOps_File_DIR)
   design.evalTclString("read_spef " + _CircuitOps_File_DIR.SPEF_FILE)
   timing = Timing(design)
@@ -637,12 +625,8 @@ def get_tables_OpenROAD_API(data_root, write_table, return_df, design, tech):
   ############################################
   block = ord.get_db_block()
   insts = block.getInsts()
-<<<<<<< HEAD:src/python/openroad_helpers.py
-  for inst in tqdm(insts):
-=======
   t_b4_instsloop = time.time()
   for inst in insts:
->>>>>>> e1c9983ed643cd8d2f2d3172a09fc6a2033a30d0:scripts/python/openroad_helpers.py
     cell_dict = defaultdict()
     cell_name = inst.getName()
     cell_dict["cell_name"] = cell_name
@@ -686,17 +670,12 @@ def get_tables_OpenROAD_API(data_root, write_table, return_df, design, tech):
     ######################
     for ITerm in inst_ITerms:
       #skip VDD/VSS pins
-<<<<<<< HEAD:src/python/openroad_helpers.py
-      if ITerm.getNet() == None:
-        print(f"Skipping pin {ITerm.getName()} as it is not connected to any net")
-=======
       net = ITerm.getNet()
       if net == None:
         print("WARN: Pin "+ITerm.getName()+" is not connected")
         pin_net_name = 'NA'
         pin_name = design.getITermName(ITerm)
         pin_is_in_clk = 0
->>>>>>> e1c9983ed643cd8d2f2d3172a09fc6a2033a30d0:scripts/python/openroad_helpers.py
         continue
       if ITerm.getNet().getSigType() != 'POWER' and ITerm.getNet().getSigType() != 'GROUND':
         #pin_property

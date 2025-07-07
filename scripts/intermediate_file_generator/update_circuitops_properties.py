@@ -45,8 +45,10 @@ def updated_dataframe_generate(filePath: str, design: str):
   tech, design = load_design(pyargs.design_name, False)
   timing = Timing(design)
   corner = timing.getCorners()[0]
-  if check_validity(filePath, design, timing):
-    if swap_libcell(filePath, design):
+  # if check_validity(filePath, design, timing):
+    # if swap_libcell(filePath, design):
+  if True:
+    if True:
       # Legalization
       site = design.getBlock().getRows()[0].getSite()
       max_disp_x = int(design.micronToDBU(0.1) / site.getWidth())
@@ -121,6 +123,8 @@ if __name__ == "__main__":
   cell_df, pin_df = updated_dataframe_generate(pyargs.file_path, pyargs.design_name)
   
   if pyargs.dump_csv:
+    if not os.path.exists(pyargs.dump_path): 
+      os.makedirs(pyargs.dump_path)
     if cell_df is not None and pin_df is not None:
       cell_df.to_csv("%scell_properties_update.csv"%pyargs.dump_path, index = False)
       pin_df.to_csv("%spin_properties_update.csv"%pyargs.dump_path, index = False)

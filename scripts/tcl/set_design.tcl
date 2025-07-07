@@ -14,27 +14,21 @@
 # limitations under the License.
 
 ### SET DESIGN ###
-# set DESIGN_NAME gcd
-#set DESIGN_NAME aes
-#set DESIGN_NAME bp_fe
-#set DESIGN_NAME bp_be
-set DESIGN_NAME NV_NVDLA_partition_m
-# set design_file_name 6_final
-set design_file_name NV_NVDLA_partition_m
+#set DESIGN_NAME NV_NVDLA_partition_a
+set DESIGN_NAME gcd
 
 ### SET PLATFORM ###
-# set PLATFORM nangate45
-set PLATFORM asap7
+set PLATFORM nangate45
 
 ### SET OUTPUT DIRECTORY ###
 set OUTPUT_DIR "./IRs/${PLATFORM}/${DESIGN_NAME}"
 
 ### FIXED LOAD CELL
-set fixed_load_cell "INVx1_ASAP7_75t_R"
+set fixed_load_cell "INV_X1"
 
 ### INTERNAL DEFINTIONS: DO NOT MODIFY BELOW ####
 set CIRCUIT_OPS_DIR "./"
-set DESIGN_DIR "${CIRCUIT_OPS_DIR}/designs/${DESIGN_NAME}"
+set DESIGN_DIR "${CIRCUIT_OPS_DIR}/designs/${PLATFORM}/${DESIGN_NAME}"
 set PLATFORM_DIR "${CIRCUIT_OPS_DIR}/platforms/${PLATFORM}"
 
 file mkdir "${OUTPUT_DIR}"

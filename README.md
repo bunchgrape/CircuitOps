@@ -106,11 +106,17 @@ The repository is organized as follows:
 
 python CircuitOps_example.py --path_IR ../../IR_Tables/NV_NVDLA_partition_m/ --path_LPG_gen_func ../../src/python/
 
-OpenROAD/install/bin/openroad ./src/tcl/generate_tables.tcl
+src/OpenROAD/install/bin/openroad ./src/tcl/generate_tables.tcl
+
+../OpenROAD/install/bin/openroad ./src/tcl/generate_tables.tcl
 
 python BT_sampling_OpenROAD.py ../../IRs/ASAP7/NV_NVDLA_partition_m/ ../../datasets/
 
 python load_sampling_OpenROAD.py ../../IRs/ASAP7/NV_NVDLA_partition_m/ ../../datasets/
+
+src/OpenROAD/install/bin/openroad ./scripts/tcl/generate_tables.tcl
+
+../OpenROAD/install/bin/openroad ./scripts/tcl/generate_tables.tcl
 ```
 
 #### gRPC-based Data Transfer

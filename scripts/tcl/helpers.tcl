@@ -313,8 +313,19 @@ proc get_fix_load_delay {libcell_name corner fix_load_insts} {
   return $fix_load_delay      
 }
 
+proc breakpoint args {
+    while 1 {
+        puts -nonewline "$args% "
+        flush stdout
+        gets stdin cmd
+        if {$cmd=="continue" || $cmd=="c"} break
+        catch {uplevel 1 $cmd} res
+        if [string length $res] {puts $res}
+    }
+}
 
 proc get_fo4_delay {libcell_name corner} {
+  puts $libcell_name
   set libcell [get_lib_cells $libcell_name]
   if {$libcell == ""} {
     return "NaN"
@@ -401,6 +412,11 @@ proc get_fo4_delay {libcell_name corner} {
   foreach fo4_load_inst $fo4_load_insts {
     ::sta::delete_instance $fo4_load_inst
   }
+
+  if { $libcell_name == "FAx1_ASAP7_75t_R"} {
+    breakpoint
+  }
+
   unset output_pins
   ::sta::delete_net $tmp_out_net
   ::sta::delete_instance $tmp_inst
@@ -413,7 +429,8 @@ proc get_pin_x {ITerm} {
   set count 0
   set pin_geometries [$ITerm getGeometries]
   foreach pin_geometry $pin_geometries {
-    set tmp_pin_x [expr {[$pin_geometry xMin] + [$pin_geometry xMax]}]
+    set tmp_pin_x [expr {[[lindex $pin_geometry 1] xMin] + [[lindex $pin_geometry 1] xMax]}]
+    # set tmp_pin_x [expr {[$pin_geometry xMin] + [$pin_geometry xMax]}]
     set tmp_pin_x [expr {$tmp_pin_x / 2}]
     set count [expr {$count + 1}]
     set pin_x [expr {$pin_x + $tmp_pin_x}]
@@ -427,7 +444,8 @@ proc get_pin_y {ITerm} {
   set count 0
   set pin_geometries [$ITerm getGeometries]
   foreach pin_geometry $pin_geometries {
-    set tmp_pin_y [expr {[$pin_geometry yMin] + [$pin_geometry yMax]}]
+    set tmp_pin_y [expr {[[lindex $pin_geometry 1] yMin] + [[lindex $pin_geometry 1] yMax]}]
+    # set tmp_pin_y [expr {[$pin_geometry yMin] + [$pin_geometry yMax]}]
     set tmp_pin_y [expr {$tmp_pin_y / 2}]
     set count [expr {$count + 1}]
     set pin_y [expr {$pin_y + $tmp_pin_y}]
@@ -672,5 +690,4 @@ proc print_libcell_property_entry {outfile libcell_props} {
   lappend libcell_entry [dict get $libcell_props "fix_load_delay"];#libcell_delay_fixed_load
   puts $outfile [join $libcell_entry ","]
 }
-
 
