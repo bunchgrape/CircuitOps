@@ -228,7 +228,7 @@ def construct_LUT_files(IR_path, design_path):
     pin_props.df['to_bottom'] = pin_props.df['y'] - by
         
     # LUT extraction for edges
-    lib_dir = '/home/vgopal18/OpenROAD/OpenROAD-flow-scripts/flow/platforms/asap7/lib/'
+    lib_dir = '/research/d4/gds/bqfu21/projs/repos/CircuitOps/platforms/asap7/lib/'
     libfiles = [libfile for libfile in sorted(os.listdir(lib_dir)) if libfile[:5] != 'sram_'] # discard macros
     libs = []
     for libfile in libfiles:
@@ -294,11 +294,11 @@ def construct_LUT_files(IR_path, design_path):
 if __name__ == "__main__":
 
     # Set the Circuitops path
-    cops_path = "/home/vgopal18/Circuitops/CircuitOps/IRs/"
+    cops_path = "/research/d4/gds/bqfu21/projs/repos/CircuitOps/IRs/"
     design_name = "gcd"
     platform = "asap7"
 
     IR_path = f"{cops_path}/{platform}/{design_name}/"
-    design_path = "/home/vgopal18/OpenROAD/OpenROAD-flow-scripts/flow/results/asap7/gcd/base/"
+    design_path = "/research/d4/gds/bqfu21/projs/repos/OpenROAD-flow-scripts/flow/results/asap7/gcd/base/"
 
     construct_LUT_files(IR_path, design_path)

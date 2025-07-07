@@ -105,7 +105,7 @@ def generate_ml_data(gs):
 if __name__ == "__main__":
     # load all datasets in design_names = ['NV_NVDLA_partition_m', 'NV_NVDLA_partition_p', 'ariane136', 'mempool_tile_wrap']
     design_names = ['gcd']
-    cops_path = "/home/vgopal18/Circuitops/CircuitOps/IRs/"
+    cops_path = "/research/d4/gds/bqfu21/projs/repos/CircuitOps/IRs/"
     platform = "asap7"
 
     data_dir = f"{ROOT_DIR}/data/" 

@@ -26,6 +26,8 @@ import dgl
 import networkx as nx
 import torch
 
+from pdb import set_trace as bp
+
 from circuitops_api import *
 
 def get_node_features(data_dir):
@@ -164,6 +166,8 @@ def preprocess_buff_luts(data_dir):
         pk.dump({'BUFF_cell_props': BUFF_cell_props, 'BUFF_pin_rf_caps': BUFF_pin_rf_caps}, pkf)
   
 def construct_dgl(data_dir):
+
+    bp()
     pin_pin_df = pd.read_csv(f'{data_dir}/pin_pin_df.csv', index_col=0)
     pin_df = pd.read_csv(f'{data_dir}/pin_df.csv', index_col=0)
     net_df = pd.read_csv(f'{data_dir}/net_df.csv', index_col=0)
@@ -218,7 +222,7 @@ def construct_dgl(data_dir):
 
 def construct_dgl_main(data_dir): 
 
-    preprocess_buff_luts(data_dir)
+    # preprocess_buff_luts(data_dir)
 
     g = construct_dgl(data_dir)
      
@@ -274,7 +278,7 @@ def construct_dgl_main(data_dir):
 
 if __name__ == "__main__":
     # Set the Circuitops path
-    cops_path = "/home/vgopal18/Circuitops/CircuitOps/IRs/"
+    cops_path = "/research/d4/gds/bqfu21/projs/repos/CircuitOps/IRs/"
     design_name = "gcd"
     platform = "asap7"
 

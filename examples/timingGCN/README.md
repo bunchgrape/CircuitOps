@@ -12,6 +12,10 @@ The source code from the paper was initially modified by Chih-Yu Lai <chihyul@mi
 ```
 python3 src/main.py -d "gcd" -t "nangate45" -design_path "<path to design files>"
 
+python3 -m pdb src/main.py -d "gcd" -t "asap7" -design_path /research/d4/gds/bqfu21/projs/repos/OpenROAD-flow-scripts/flow/results/asap7/gcd/base
+
+python3 -m pdb src/main.py -d "gcd" -t "nangate45" -design_path /research/d4/gds/bqfu21/projs/repos/OpenROAD-flow-scripts/flow/results/nangate45/gcd/base
+
 Arguments:
 -d --> Optional argument to provide design name. Default: gcd
 -t --> Optional argument to provide tech node. Default: nangate45
